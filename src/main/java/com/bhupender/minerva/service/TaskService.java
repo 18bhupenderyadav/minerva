@@ -6,7 +6,6 @@ import com.bhupender.minerva.model.dto.TaskDto;
 import com.bhupender.minerva.model.dto.TaskReadDto;
 import com.bhupender.minerva.repository.TaskRepository;
 import com.bhupender.minerva.service.exception.NotFoundException;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,7 @@ public class TaskService {
     private TaskRepository taskRepository;
 
     @Autowired
-    private RabbitTemplate rabbitTemplate;
+    private RabbitMQProducerService rabbitMQProducerService;
 
     public List<TaskReadDto> getAllTasks() {
         List<Task> tasks = taskRepository.findAll();
@@ -48,14 +47,10 @@ public class TaskService {
         // Check if the task needs to be executed today
         if (isTaskScheduledForToday(task)) {
             // Send the task to RabbitMQ
-            sendMessageToRabbitMQ(task);
+            rabbitMQProducerService.sendMessageToRabbitMQ(task);
         }
 
         return TaskBuilder.convertToReadDto(task);
-    }
-
-    private void sendMessageToRabbitMQ(Task task) {
-        rabbitTemplate.convertAndSend("taskQueue", task);
     }
 
     private boolean isTaskScheduledForToday(Task task) {
