@@ -47,7 +47,8 @@ public class TaskService {
         // Check if the task needs to be executed today
         if (isTaskScheduledForToday(task)) {
             // Send the task to RabbitMQ
-            rabbitMQProducerService.sendMessageToRabbitMQ(task);
+
+            rabbitMQProducerService.sendMessageToTaskQueue(task);
         }
 
         return TaskBuilder.convertToReadDto(task);

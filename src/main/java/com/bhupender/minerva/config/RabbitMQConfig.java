@@ -27,4 +27,9 @@ public class RabbitMQConfig {
     public Queue taskQueue() {
         return new Queue("taskQueue", true); // Declare queue with name "taskQueue" and durable option true
     }
+
+    @Bean
+    public Queue executionQueue() {
+        return new Queue("executionQueue", true); // Declare queue with name "taskQueue" and durable option true
+    }
 }
